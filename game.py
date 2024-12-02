@@ -15,6 +15,21 @@ class ResourceManager:
         self.workforce = {"food": 0, "wood": 0, "water": 0}
         self.points = 0
         self.morality = 50
+        self.difficulty = difficulty
+        self.set_disaster_chance()
+
+    def set_disaster_chance(self):
+        """Set disaster chance based on the difficulty level."""
+        if self.difficulty == 'Easy':
+            self.disaster_chance = 0.10  # 5% chance of a disaster
+        elif self.difficulty == 'Medium':
+            self.disaster_chance = 0.20  # 15% chance of a disaster
+        elif self.difficulty == 'Hard':
+            self.disaster_chance = 0.25  # 25% chance of a disaster
+        elif self.difficulty == 'Nightmare':
+            self.disaster_chance = 0.33  # 40% chance of a disaster
+        else:
+            self.disaster_chance = 0.1  # Default disaster chance (for any other value)
 
     def display_resources(self):
         print(f"\n📊 Current Resources:")
@@ -84,21 +99,44 @@ class ResourceManager:
 
     def check_random_disaster(self):
         """Random chance of a natural disaster."""
-        if random.random() <= 0.2:  # 20% chance
-            print("\n🔥 A random natural disaster has occurred!")
-            self.apply_disaster_damage()
+        disaster_roll = random.random()
+        if disaster_roll <= self.disaster_chance:
+            disaster_type = random.choice(["Heatwave", "Tsunami", "Volcanic Eruption", "Thunderstorm"])
+        print(f"\n🔥 A {disaster_type} has occurred!")
+        self.apply_disaster_damage(disaster_type)
 
     def apply_disaster_damage(self):
         """Apply random disaster damage."""
-        damage_percentage = random.uniform(0.01, 0.30)
-        self.food -= int(self.food * damage_percentage)
-        self.wood -= int(self.wood * damage_percentage)
-        self.water -= int(self.water * damage_percentage)
-        self.morality -= 5
-        print(f"⚠️ Disaster! Resources reduced by {damage_percentage * 100:.2f}%.")
+        if disaster_type == "Heatwave":
+            damage_percentage = random.uniform(0.25, 0.40)
+            self.water -= int(self.water * damage_percentage)
+            self.morality -= 5
+            print(f"⚠️ Heatwave! Everyone is feining for water! Water reduced by {damage_percentage * 100:.2f}%.")
+            
+        elif disaster_type == "Tsunami":
+            damage_percentage = random.uniform(0.20, 0.50)
+            self.food -= int(self.food * damage_percentage)
+            self.wood -= int(self.wood * damage_percentage)
+            self.morality -= 10
+            print(f"⚠️ Tsunami! Super Unlucky and Deadly! Food and Wood reduced by {damage_percentage * 100:.2f}%.")
+            
+        elif disaster_type == "Volcanic Eruption":
+            damage_percentage = random.uniform(0.15, 0.25)
+            self.food -= int(self.food * damage_percentage)
+            self.wood -= int(self.wood * damage_percentage)
+            self.water -= int(self.water * damage_percentage)
+            self.morality -= 12
+            print(f"⚠️ Volcanic Eruption! Everyone is shivering in their boots due to this catastrophic event!! Resources reduced by {damage_percentage * 100:.2f}%.")
+            
+            
+        elif disaster_type == "Thunderstorm":
+            damage_percentage = random.uniform(0.05, 0.15)
+            self.wood -= int(self.wood * damage_percentage)
+            self.water -= int(self.water * damage_percentage)
+            self.morality -= 3
+            print(f"⚠️ Thunderstorm! Some Resources may be destroyed and children are scared! Resources reduced by {damage_percentage * 100:.2f}%.")
         print(f"Remaining: Food: {self.food}, Wood: {self.wood}, Water: {self.water}")
         print(f"Morality reduced to {self.morality}")
-
     def check_and_award_points(self):
         """Award points for reaching resource and moral goals."""
         if self.food >= self.goal_resources:
@@ -234,10 +272,92 @@ class TradeManager:
 class SettlementGame:
     def __init__(self):
         self.player_name = input("\n🌟 Enter your name: ").strip() or "Anonymous"
-        self.manager = ResourceManager(food=100, wood=100, water=100, goal_resources=500, population=10)
+        self.difficulty = self.choose_difficulty()
+        self.manager = ResourceManager(
+            food=self.difficulty["food"],
+            wood=self.difficulty["wood"],
+            water=self.difficulty["water"],
+            goal_resources=self.difficulty["goal_resources"],
+            population=self.difficulty["population"]
+        )
+        
         self.ethical_manager = EthicalTradeManager()
         self.dilemma_probability = 0.3  # 30% chance of encountering a dilemma each month
+    def choose_difficulty(self):
+        """Choose difficulty and set starting resources based on difficulty."""
+        print("\nChoose your game mode:")
+        print("1. Easy")
+        print("2. Medium")
+        print("3. Hard")
+        print("4. Nightmare")
 
+        while True:
+            try:
+                choice = int(input("\nSelect a difficulty (1-4): "))
+                if choice == 1:
+                    self.display_land_description("Easy")
+                    return {
+                        "food": 150,
+                        "wood": 150,
+                        "water": 150,
+                        "goal_resources": 350,
+                        "population": 15
+                    }
+                elif choice == 2:
+                    self.display_land_description("Medium")
+                    return {
+                        "food": 100,
+                        "wood": 100,
+                        "water": 100,
+                        "goal_resources": 500,
+                        "population": 10
+                    }
+                elif choice == 3:
+                    self.display_land_description("Hard")
+                    return {
+                        "food": 75,
+                        "wood": 75,
+                        "water": 75,
+                        "goal_resources": 700,
+                        "population": 8
+                    }
+                elif choice == 4:
+                    self.display_land_description("Nightmare")
+                    return {
+                        "food": 50,
+                        "wood": 50,
+                        "water": 50,
+                        "goal_resources": 850,
+                        "population": 5
+                    }
+                else:
+                    raise ValueError("Invalid choice. Please select a number between 1 and 4.")
+            except ValueError as e:
+                print(f"❌ Error: {e}. Please try again.")
+    def display_land_description(self, difficulty):
+        """Display a description of the player's land based on the difficulty level."""
+        descriptions = {
+            "Easy": (
+                "You have settled on a fertile piece of land with abundant natural resources. "
+                "The soil is rich, forests are plentiful, and nearby water sources are easily accessible. "
+                "Your settlement will thrive with ease, and you have room to expand rapidly."
+            ),
+            "Medium": (
+                "Your settlement is on moderately fertile land. Resources are balanced, but you will need to manage them wisely. "
+                "The terrain has some challenges, with fewer forests and a distant water source, but your settlement can grow with effort."
+            ),
+            "Hard": (
+                "The land you occupy is harsh and unforgiving. Resources are scarce, and you will struggle to gather enough food, wood, and water. "
+                "The terrain is rugged, with little fertile land, and the weather is unpredictable. Expansion will be slow."
+            ),
+            "Nightmare": (
+                "You have chosen to settle in an unknown island. The resources are barely sufficient to sustain a small settlement. "
+                "The environment is treacherous, with frequent natural disasters, droughts, and harsh conditions. "
+                "Survival is a constant struggle, and every decision could be the difference between life and death."
+            )
+        }
+        print(f"\n🌍 Land Description: {descriptions[difficulty]}")
+        
     def game_loop(self):
         """Main game loop."""
         while self.manager.current_month <= self.manager.max_months:
