@@ -3,7 +3,7 @@ import json
 import os
 
 class ResourceManager:
-    def __init__(self, food, wood, water, goal_resources, population):
+    def __init__(self, food, wood, water, goal_resources, population, disaster_chance):
         self.food = food
         self.wood = wood
         self.water = water
@@ -15,21 +15,7 @@ class ResourceManager:
         self.workforce = {"food": 0, "wood": 0, "water": 0}
         self.points = 0
         self.morality = 50
-        self.difficulty = difficulty
-        self.set_disaster_chance()
-
-    def set_disaster_chance(self):
-        """Set disaster chance based on the difficulty level."""
-        if self.difficulty == 'Easy':
-            self.disaster_chance = 0.10  # 5% chance of a disaster
-        elif self.difficulty == 'Medium':
-            self.disaster_chance = 0.20  # 15% chance of a disaster
-        elif self.difficulty == 'Hard':
-            self.disaster_chance = 0.25  # 25% chance of a disaster
-        elif self.difficulty == 'Nightmare':
-            self.disaster_chance = 0.33  # 40% chance of a disaster
-        else:
-            self.disaster_chance = 0.1  # Default disaster chance (for any other value)
+        self.disaster_chance = disaster_chance
 
     def display_resources(self):
         print(f"\n📊 Current Resources:")
@@ -102,16 +88,16 @@ class ResourceManager:
         disaster_roll = random.random()
         if disaster_roll <= self.disaster_chance:
             disaster_type = random.choice(["Heatwave", "Tsunami", "Volcanic Eruption", "Thunderstorm"])
-        print(f"\n🔥 A {disaster_type} has occurred!")
-        self.apply_disaster_damage(disaster_type)
+            print(f"\n🔥 A {disaster_type} has occurred!")
+            self.apply_disaster_damage(disaster_type)
 
-    def apply_disaster_damage(self):
+    def apply_disaster_damage(self, disaster_type):
         """Apply random disaster damage."""
         if disaster_type == "Heatwave":
             damage_percentage = random.uniform(0.25, 0.40)
             self.water -= int(self.water * damage_percentage)
             self.morality -= 5
-            print(f"⚠️ Heatwave! Everyone is feining for water! Water reduced by {damage_percentage * 100:.2f}%.")
+            print(f"⚠️ Heatwave! Everyone is feigning for water! Water reduced by {damage_percentage * 100:.2f}%.")
             
         elif disaster_type == "Tsunami":
             damage_percentage = random.uniform(0.20, 0.50)
@@ -128,7 +114,6 @@ class ResourceManager:
             self.morality -= 12
             print(f"⚠️ Volcanic Eruption! Everyone is shivering in their boots due to this catastrophic event!! Resources reduced by {damage_percentage * 100:.2f}%.")
             
-            
         elif disaster_type == "Thunderstorm":
             damage_percentage = random.uniform(0.05, 0.15)
             self.wood -= int(self.wood * damage_percentage)
@@ -137,6 +122,7 @@ class ResourceManager:
             print(f"⚠️ Thunderstorm! Some Resources may be destroyed and children are scared! Resources reduced by {damage_percentage * 100:.2f}%.")
         print(f"Remaining: Food: {self.food}, Wood: {self.wood}, Water: {self.water}")
         print(f"Morality reduced to {self.morality}")
+
     def check_and_award_points(self):
         """Award points for reaching resource and moral goals."""
         if self.food >= self.goal_resources:
@@ -278,7 +264,8 @@ class SettlementGame:
             wood=self.difficulty["wood"],
             water=self.difficulty["water"],
             goal_resources=self.difficulty["goal_resources"],
-            population=self.difficulty["population"]
+            population=self.difficulty["population"],
+            disaster_chance=self.difficulty["disaster_chance"]
         )
         
         self.ethical_manager = EthicalTradeManager()
@@ -301,7 +288,8 @@ class SettlementGame:
                         "wood": 150,
                         "water": 150,
                         "goal_resources": 350,
-                        "population": 15
+                        "population": 15,
+                        "disaster_chance": 0.10
                     }
                 elif choice == 2:
                     self.display_land_description("Medium")
@@ -310,7 +298,8 @@ class SettlementGame:
                         "wood": 100,
                         "water": 100,
                         "goal_resources": 500,
-                        "population": 10
+                        "population": 10,
+                        "disaster_chance": 0.20
                     }
                 elif choice == 3:
                     self.display_land_description("Hard")
@@ -319,7 +308,8 @@ class SettlementGame:
                         "wood": 75,
                         "water": 75,
                         "goal_resources": 700,
-                        "population": 8
+                        "population": 8,
+                        "disaster_chance": 0.25
                     }
                 elif choice == 4:
                     self.display_land_description("Nightmare")
@@ -328,7 +318,8 @@ class SettlementGame:
                         "wood": 50,
                         "water": 50,
                         "goal_resources": 850,
-                        "population": 5
+                        "population": 5,
+                        "disaster_chance": 0.35
                     }
                 else:
                     raise ValueError("Invalid choice. Please select a number between 1 and 4.")
