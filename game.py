@@ -27,8 +27,8 @@ class ResourceManager:
         max_workers = self.population
         while True:
             try:
-                food_workers = int(input(f"How many workers for food (max {max_workers})? "))
-                wood_workers = int(input(f"How many workers for wood (max {max_workers - food_workers})? "))
+                food_workers = int(input(f"How many workers for food (max: {max_workers})? "))
+                wood_workers = int(input(f"How many workers for wood (max: {max_workers - food_workers})? "))
                 water_workers = max_workers - food_workers - wood_workers
 
                 if food_workers + wood_workers > max_workers or food_workers < 0 or wood_workers < 0:
