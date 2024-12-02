@@ -97,7 +97,7 @@ class ResourceManager:
             damage_percentage = random.uniform(0.25, 0.40)
             self.water -= int(self.water * damage_percentage)
             self.morality -= 5
-            print(f"⚠️ Heatwave! Everyone is feigning for water! Water reduced by {damage_percentage * 100:.2f}%.")
+            print(f"⚠️ Heatwave! Everyone is FEINING for water! Water reduced by {damage_percentage * 100:.2f}%.")
             
         elif disaster_type == "Tsunami":
             damage_percentage = random.uniform(0.20, 0.50)
@@ -294,32 +294,32 @@ class SettlementGame:
                 elif choice == 2:
                     self.display_land_description("Medium")
                     return {
-                        "food": 100,
-                        "wood": 100,
-                        "water": 100,
+                        "food": 125,
+                        "wood": 125,
+                        "water": 125,
                         "goal_resources": 500,
-                        "population": 10,
-                        "disaster_chance": 0.20
+                        "population": 12,
+                        "disaster_chance": 0.15
                     }
                 elif choice == 3:
                     self.display_land_description("Hard")
                     return {
-                        "food": 75,
-                        "wood": 75,
-                        "water": 75,
+                        "food": 100,
+                        "wood": 100,
+                        "water": 100,
                         "goal_resources": 700,
-                        "population": 8,
-                        "disaster_chance": 0.25
+                        "population": 10,
+                        "disaster_chance": 0.22
                     }
                 elif choice == 4:
                     self.display_land_description("Nightmare")
                     return {
-                        "food": 50,
-                        "wood": 50,
-                        "water": 50,
+                        "food": 75,
+                        "wood": 75,
+                        "water": 75,
                         "goal_resources": 850,
-                        "population": 5,
-                        "disaster_chance": 0.35
+                        "population": 8,
+                        "disaster_chance": 0.30
                     }
                 else:
                     raise ValueError("Invalid choice. Please select a number between 1 and 4.")
